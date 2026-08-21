@@ -49,7 +49,7 @@ export default function SignalForgeModernUI() {
     setData(null); // Clear previous results
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/research/", {
+      const response = await fetch("https://signalforge-api.onrender.com/api/research/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, depth }),
