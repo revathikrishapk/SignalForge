@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Search, Sparkles, BrainCircuit, Zap, Target, Loader2, AlertTriangle, ArrowRight } from "lucide-react";
 
 // --- Types ---
@@ -19,8 +19,8 @@ interface SignalForgeData {
   recommended_actions: string[];
 }
 
-// --- Animation Variants ---
-const containerVariants = {
+// --- Animation Variants (Typed with 'as const' to prevent Vercel TS build errors) ---
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -28,9 +28,13 @@ const containerVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100 } }
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 100 }
+  }
 };
 
 // --- Main Component ---
@@ -46,7 +50,7 @@ export default function SignalForgeModernUI() {
     if (!topic.trim()) return;
     setLoading(true);
     setError(null);
-    setData(null); // Clear previous results
+    setData(null);
 
     try {
       const response = await fetch("https://signalforge-api.onrender.com/api/research/", {
@@ -75,11 +79,13 @@ export default function SignalForgeModernUI() {
             <div className="p-2 bg-sky-600 rounded-xl shadow-md shadow-sky-100">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tighter text-slate-950">SignalForge<span className="text-sky-600">.</span></h1>
+            <h1 className="text-xl font-bold tracking-tighter text-slate-950">
+              SignalForge<span className="text-sky-600">.</span>
+            </h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-500">Powered by Gemini 1.5 Pro</span>
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span className="text-xs font-medium text-slate-500">Powered by Gemini 2.5 Flash</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </div>
         </div>
       </nav>
@@ -101,7 +107,7 @@ export default function SignalForgeModernUI() {
               Synthesize complex topics into <span className="text-sky-600">actionable insights.</span>
             </h2>
             <p className="text-lg text-slate-600 mb-10 leading-relaxed">
-              Enter any technology, market trend, or competitive landscape. Signal Forge uses advanced AI to visualize signals and recommend strategic actions instantly.
+              Enter any technology, market trend, or competitive landscape. SignalForge uses advanced AI to visualize signals and recommend strategic actions instantly.
             </p>
           </motion.div>
 
@@ -148,16 +154,30 @@ export default function SignalForgeModernUI() {
           
           {/* Loading State */}
           {loading && (
-            <motion.div key="loading" initial="hidden" animate="visible" exit="hidden" variants={containerVariants} className="text-center py-20 bg-slate-50 rounded-3xl border border-slate-100">
+            <motion.div 
+              key="loading" 
+              initial="hidden" 
+              animate="visible" 
+              exit="hidden" 
+              variants={containerVariants} 
+              className="text-center py-20 bg-slate-50 rounded-3xl border border-slate-100"
+            >
               <Loader2 className="w-12 h-12 animate-spin text-sky-600 mx-auto mb-6" />
               <h3 className="text-xl font-semibold text-slate-900">Synthesizing Intelligence...</h3>
-              <p className="text-slate-600 mt-2">Gemini is processing thousands of data points for '{topic}'</p>
+              <p className="text-slate-600 mt-2">Gemini is processing thousands of data points for &apos;{topic}&apos;</p>
             </motion.div>
           )}
 
           {/* Error State */}
           {error && (
-            <motion.div key="error" initial="hidden" animate="visible" exit="hidden" variants={containerVariants} className="p-6 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 flex items-center gap-4 max-w-2xl mx-auto">
+            <motion.div 
+              key="error" 
+              initial="hidden" 
+              animate="visible" 
+              exit="hidden" 
+              variants={containerVariants} 
+              className="p-6 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 flex items-center gap-4 max-w-2xl mx-auto"
+            >
               <AlertTriangle className="w-10 h-10 text-amber-500 flex-shrink-0" />
               <div>
                 <h4 className="font-bold">Analysis Interrupted</h4>
@@ -192,7 +212,7 @@ export default function SignalForgeModernUI() {
                 {/* Key Insights Column */}
                 <div className="space-y-6">
                   <motion.h4 variants={itemVariants} className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                    Core Technical & Market Insights
+                    Core Technical &amp; Market Insights
                   </motion.h4>
                   {data.key_insights.map((insight, idx) => (
                     <motion.div 
@@ -260,7 +280,7 @@ export default function SignalForgeModernUI() {
       {/* --- Minimal Footer --- */}
       <footer className="border-t border-slate-100 mt-24">
         <div className="max-w-7xl mx-auto px-6 py-8 text-center text-sm text-slate-500">
-          &copy; 2024 AI Engineering Lab. All rights reserved. SignalForge Pro v1.0
+          &copy; 2026 AI Engineering Lab. All rights reserved. SignalForge Pro v1.0
         </div>
       </footer>
     </div>

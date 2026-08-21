@@ -8,9 +8,7 @@ app = FastAPI(title="AI Engineering Lab API")
 # Update origins to cover both localhost and 127.0.0.1 on all common dev ports
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3001",
+    "https://*.vercel.app",
 ]
 
 app.add_middleware(
