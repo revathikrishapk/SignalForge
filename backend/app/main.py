@@ -9,6 +9,7 @@ app = FastAPI(title="AI Engineering Lab API")
 origins = [
     "http://localhost:3000",
     "https://*.vercel.app",
+    "https://signal-forge-omega-six.vercel.app",
 ]
 
 app.add_middleware(

@@ -19,7 +19,7 @@ interface SignalForgeData {
   recommended_actions: string[];
 }
 
-// --- Animation Variants (Typed with 'as const' to prevent Vercel TS build errors) ---
+// --- Animation Variants ---
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -53,7 +53,7 @@ export default function SignalForgeModernUI() {
     setData(null);
 
     try {
-      const response = await fetch("https://signalforge-api.onrender.com/api/research/", {
+      const response = await fetch("https://signalforge-1szp.onrender.com/api/research/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, depth }),
