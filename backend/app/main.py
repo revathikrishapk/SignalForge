@@ -1,18 +1,26 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.research import router as research_router
-
+from dotenv import load_dotenv
+load_dotenv()
 app = FastAPI(title="AI Engineering Lab API")
+
+# Update origins to cover both localhost and 127.0.0.1 on all common dev ports
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Register API routers
 app.include_router(research_router)
 
 @app.get("/")
