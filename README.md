@@ -1,5 +1,7 @@
 # SignalForge ⚡
 
+APP LINK : https://signal-forge-omega-six.vercel.app/
+
 Autonomous AI market and technology intelligence platform powered by **Next.js 14**, **FastAPI**, and **Gemini 2.5**.
 
 ---
