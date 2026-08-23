@@ -43,16 +43,13 @@ def fetch_arxiv_sources(topic: str, max_results: int = 5):
 @router.post("/")
 async def analyze_topic(req: ResearchRequest):
     try:
-        # 1. Fetch live sources from arXiv
         sources = fetch_arxiv_sources(req.topic)
         
-        # 2. Format context for Gemini
         context_str = "\n".join([
             f"[{i+1}] Title: {s['title']}\nSnippet: {s['snippet']}\nURL: {s['url']}\n"
             for i, s in enumerate(sources)
         ])
         
-        # 3. Prompt Gemini to cite sources inline [1], [2]
         prompt = f"""
         Synthesize the research topic using ONLY the provided sources where relevant.
         Topic: {req.topic}
@@ -75,8 +72,6 @@ async def analyze_topic(req: ResearchRequest):
         response = model.generate_content(prompt)
         
         parsed = json.loads(response.text)
-        
-        # 4. CRITICAL: Attach sources array to payload
         parsed["sources"] = sources
         
         return parsed
