@@ -11,6 +11,8 @@ from google.genai import types
 import httpx
 from pydantic import BaseModel, Field
 from upstash_redis.asyncio import Redis
+from dotenv import load_dotenv
+load_dotenv()
 
 router = APIRouter(prefix="/api/research", tags=["research"])
 
