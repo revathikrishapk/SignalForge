@@ -54,24 +54,22 @@ async def analyze_topic(req: ResearchRequest):
             for i, s in enumerate(sources)
         ])
         
-        # Doubled {{ and }} below to escape JSON braces in Python f-string
-        prompt = f"""
-        Synthesize the research topic using ONLY the provided sources where relevant.
-        Topic: {req.topic}
-        
-        Retrieved Sources:
-        {context_str if context_str else "No academic papers found. Synthesize based on domain knowledge."}
-        
-        Instructions:
-        - Include inline citations like [1], [2] in executive_summary and key_insights where facts align with sources.
-        - Return valid JSON matching this schema:
-        {{
-          "executive_summary": "Summary string with citations [1]",
-          "key_insights": [{{"title": "Title", "summary": "Detailed summary with citations [1]", "impact_score": 8}}],
-          "market_signals": ["Signal string [2]"],
-          "recommended_actions": ["Action string"]
-        }}
-        """
+        # Plain string avoids all f-string escaping crashes
+        prompt = (
+            "Synthesize the research topic using ONLY the provided sources where relevant.\n"
+            f"Topic: {req.topic}\n\n"
+            "Retrieved Sources:\n"
+            f"{context_str if context_str else 'No academic papers found. Synthesize based on domain knowledge.'}\n\n"
+            "Instructions:\n"
+            "- Include inline citations like [1], [2] in executive_summary and key_insights where facts align with sources.\n"
+            "- Return valid JSON matching this schema:\n"
+            "{\n"
+            '  "executive_summary": "Summary string with citations [1]",\n'
+            '  "key_insights": [{"title": "Title", "summary": "Detailed summary with citations [1]", "impact_score": 8}],\n'
+            '  "market_signals": ["Signal string [2]"],\n'
+            '  "recommended_actions": ["Action string"]\n'
+            "}"
+        )
         
         # 3. Call Gemini using modern SDK client
         client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
