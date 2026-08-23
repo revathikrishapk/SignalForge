@@ -43,27 +43,28 @@ def fetch_arxiv_sources(topic: str, max_results: int = 5):
 @router.post("/")
 async def analyze_topic(req: ResearchRequest):
     try:
-        # Step 1: Grounding via arXiv
+        # 1. Fetch live sources from arXiv
         sources = fetch_arxiv_sources(req.topic)
         
+        # 2. Format context for Gemini
         context_str = "\n".join([
             f"[{i+1}] Title: {s['title']}\nSnippet: {s['snippet']}\nURL: {s['url']}\n"
             for i, s in enumerate(sources)
         ])
         
-        # Step 2: Gemini Synthesis with Grounding Instructions
+        # 3. Prompt Gemini to cite sources inline [1], [2]
         prompt = f"""
         Synthesize the research topic using ONLY the provided sources where relevant.
         Topic: {req.topic}
         
-        Sources:
+        Retrieved Sources:
         {context_str if context_str else "No academic papers found. Synthesize based on domain knowledge."}
         
         Instructions:
         - Include inline citations like [1], [2] in executive_summary and key_insights where facts align with sources.
         - Return valid JSON matching this schema:
         {{
-          "executive_summary": "...",
+          "executive_summary": "Summary string with citations [1]",
           "key_insights": [{"title": "...", "summary": "...", "impact_score": 8}],
           "market_signals": ["..."],
           "recommended_actions": ["..."]
@@ -74,7 +75,9 @@ async def analyze_topic(req: ResearchRequest):
         response = model.generate_content(prompt)
         
         parsed = json.loads(response.text)
-        parsed["sources"] = sources  # Pass retrieved sources back to UI
+        
+        # 4. CRITICAL: Attach sources array to payload
+        parsed["sources"] = sources
         
         return parsed
     except Exception as e:
