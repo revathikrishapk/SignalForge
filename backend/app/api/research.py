@@ -2,9 +2,11 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 import json
+import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 router = APIRouter(prefix="/api/research", tags=["research"])
 
@@ -43,8 +45,10 @@ def fetch_arxiv_sources(topic: str, max_results: int = 5):
 @router.post("/")
 async def analyze_topic(req: ResearchRequest):
     try:
+        # 1. Retrieve sources from arXiv
         sources = fetch_arxiv_sources(req.topic)
         
+        # 2. Format grounding context
         context_str = "\n".join([
             f"[{i+1}] Title: {s['title']}\nSnippet: {s['snippet']}\nURL: {s['url']}\n"
             for i, s in enumerate(sources)
@@ -68,12 +72,21 @@ async def analyze_topic(req: ResearchRequest):
         }}
         """
         
-        model = genai.GenerativeModel('gemini-2.5-flash', generation_config={"response_mime_type": "application/json"})
-        response = model.generate_content(prompt)
+        # 3. Call Gemini using modern SDK client
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json"
+            )
+        )
         
         parsed = json.loads(response.text)
+        # 4. Attach sources array to payload
         parsed["sources"] = sources
         
         return parsed
     except Exception as e:
+        print(f"Error analyzing topic: {e}")
         raise HTTPException(status_code=500, detail=str(e))
