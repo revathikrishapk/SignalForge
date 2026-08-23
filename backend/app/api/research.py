@@ -54,6 +54,7 @@ async def analyze_topic(req: ResearchRequest):
             for i, s in enumerate(sources)
         ])
         
+        # Doubled {{ and }} below to escape JSON braces in Python f-string
         prompt = f"""
         Synthesize the research topic using ONLY the provided sources where relevant.
         Topic: {req.topic}
@@ -66,9 +67,9 @@ async def analyze_topic(req: ResearchRequest):
         - Return valid JSON matching this schema:
         {{
           "executive_summary": "Summary string with citations [1]",
-          "key_insights": [{"title": "...", "summary": "...", "impact_score": 8}],
-          "market_signals": ["..."],
-          "recommended_actions": ["..."]
+          "key_insights": [{{"title": "Title", "summary": "Detailed summary with citations [1]", "impact_score": 8}}],
+          "market_signals": ["Signal string [2]"],
+          "recommended_actions": ["Action string"]
         }}
         """
         
